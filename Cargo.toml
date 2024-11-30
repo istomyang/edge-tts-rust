@@ -1,0 +1,23 @@
+[package]
+name = "edge-tts"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chrono = "0.4.38"
+reqwest = { version = "0.12", features = ["json", "blocking"] }
+serde = { version = "1.0.215", features = ["derive"] }
+serde_json = "1.0.133"
+sha2 = "0.10.8"
+tungstenite = { version = "0.24.0", features = ["native-tls"] }
+uuid = { version = "1.11.0", features = [
+    "v4",
+    "fast-rng",
+    "macro-diagnostics",
+] }
+uuid-simd = "0.8.0"
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
