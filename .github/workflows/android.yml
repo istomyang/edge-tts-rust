@@ -3,10 +3,7 @@ name: Android Dynamic Library
 on:
   push:
     branches:
-      - main
-
-  # test
-  workflow_dispatch:
+      - master
 
 env:
   LIB_NAME: 'libedgetts'
