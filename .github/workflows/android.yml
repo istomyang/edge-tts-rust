@@ -12,9 +12,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Define variable
-        env:
-          LIB_NAME: 'libedgetts'
+      - name: Set LIB_NAME variable
+        run: |
+          echo "LIB_NAME=libedgetts" >> $GITHUB_ENV
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
