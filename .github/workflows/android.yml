@@ -24,7 +24,7 @@ jobs:
       - name: Install Android NDK
         uses: nttld/setup-ndk@v1
         with:
-          ndk-version: '27.2.12479018'
+          ndk-version: r27c
 
       - name: Get tag version
         run: |
