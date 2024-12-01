@@ -22,7 +22,7 @@ jobs:
           target: android
 
       - name: Install Android NDK
-        uses: actions-android/android-ndk@v1
+        uses: nttld/setup-ndk@v1
         with:
           ndk-version: '27.2.12479018'
 
