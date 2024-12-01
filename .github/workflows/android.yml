@@ -5,16 +5,15 @@ on:
     branches:
       - main
 
+env:
+  LIB_NAME: 'libedgetts'
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Set LIB_NAME variable
-        run: |
-          echo "LIB_NAME=libedgetts" >> $GITHUB_ENV
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
