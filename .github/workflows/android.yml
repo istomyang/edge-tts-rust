@@ -21,12 +21,11 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Install Rust
-        uses: actions-rs/toolchain@v1
+        uses: moonrepo/setup-rust@v1
         with:
-          toolchain: stable
-          override: true
+          channel: 'stable'
           profile: minimal
-          target: 'aarch64-linux-android, armv7-linux-androideabi, i686-linux-android, x86_64-linux-android'
+          targets: 'aarch64-linux-android, armv7-linux-androideabi, i686-linux-android, x86_64-linux-android'
 
       - name: Install Android NDK
         uses: nttld/setup-ndk@v1
