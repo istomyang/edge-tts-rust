@@ -1,0 +1,68 @@
+name: Android Dynamic Library
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Define variable
+        env:
+          LIB_NAME: 'libedgetts'
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: android
+
+      - name: Install Android NDK
+        uses: actions-android/android-ndk@v1
+        with:
+          ndk-version: '27.2.12479018'
+
+      - name: Get tag version
+        run: |
+          VERSION=$(git describe --tags --abbrev=0 | cut -c 2-)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Build and package
+        run: |
+          cargo build --target aarch64-linux-android
+          cargo build --target armv7-linux-androideabi
+          cargo build --target x86_64-linux-android
+
+          mkdir -p android/libs
+          cp target/aarch64-linux-android/debug/$LIB_NAME.so android/libs/arm64-v8a/
+          cp target/armv7-linux-androideabi/debug/$LIB_NAME.so android/libs/armeabi-v7a/
+          cp target/i686-linux-android/debug/$LIB_NAME.so android/libs/x86/
+          cp target/x86_64-linux-android/debug/$LIB_NAME.so android/libs/x86_64/
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          release_name: Android Dynamic Library
+          release_body: |
+            This release includes the compiled dynamic libraries for Android.
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Assets
+        run: |
+          ASSET_PATHS=(android/libs/arm64-v8a/${{ env.LIB_NAME }}.so android/libs/armeabi-v7a/${{ env.LIB_NAME }}.so android/libs/x86/${{ env.LIB_NAME }}.so android/libs/x86_64/${{ env.LIB_NAME }}.so)
+          ASSET_NAMES=("${{ env.LIB_NAME }}-${{ env.VERSION }}-arm64-v8a.so" "${{ env.LIB_NAME }}-${{ env.VERSION }}-armeabi-v7a.so" "${{ env.LIB_NAME }}-${{ env.VERSION }}-x86.so" "${{ env.LIB_NAME }}-${{ env.VERSION }}-x86_64.so")
+          for i in "${!ASSET_PATHS[@]}"; do
+            uses: actions/upload-release-asset@v1
+            with:
+              github_token: ${{ secrets.GITHUB_TOKEN }}
+              release_id: ${{ steps.create_release.outputs.release_id }}
+              file: ${ASSET_PATHS[$i]}
+              file_name: ${ASSET_NAMES[$i]}
+          done
