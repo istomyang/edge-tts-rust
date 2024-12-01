@@ -15,21 +15,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Get tag version
+        run: |
+          VERSION=$(git describe --tags --abbrev=0 | cut -c 2-)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+          override: true
           profile: minimal
+          targets: 'aarch64-linux-android, armv7-linux-androideabi, i686-linux-android, x86_64-linux-android'
 
       - name: Install Android NDK
         uses: nttld/setup-ndk@v1
         with:
           ndk-version: r27c
-
-      - name: Get tag version
-        run: |
-          VERSION=$(git describe --tags --abbrev=0 | cut -c 2-)
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Build and package
         run: |
